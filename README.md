@@ -44,8 +44,6 @@ saved to `src/content/blog/images/` and inserted at the cursor. The form only ex
 
 Images can live next to the post (e.g. `src/content/blog/images/`) and be referenced with a relative path.
 
-The `placeholder-*.md` posts are only there to show the layout — delete them once you have real posts.
-
 ## Filtering
 
 - Home page: filter buttons per topic (instant, and shareable via `?topic=ux`).
