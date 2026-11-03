@@ -4,8 +4,8 @@ export const SITE = {
   author: 'Renet Ruseva',
   description:
     'Process blog for my Bachelor thesis at DEVINE: research, design, development, feedback, planning and time tracking.',
-  client: 'Client name',
-  school: 'Howest — DEVINE',
+  client: 'Barco',
+  school: 'Howest - Devine',
 };
 
 // Team members. The key is what you write in a post's `authors` frontmatter and in a timelog entry's `member`.
