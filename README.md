@@ -26,6 +26,12 @@ Process blog for my bachelor thesis (DEVINE, Howest), built with [Astro](https:/
 
 ## Writing a post
 
+**Easiest:** run `npm run dev`, open [localhost:4321/new](http://localhost:4321/new) (or click **+ New post** in the
+menu), fill in the form and save. It writes a Markdown file to `src/content/blog/` that you can edit afterwards.
+The form only exists in dev mode — it is not part of the published site.
+
+**By hand:**
+
 1. Copy one of the templates in `src/content/blog/`:
    - `_template.md` — general post
    - `_template-feedback.md` — client / coach / expert meeting report
