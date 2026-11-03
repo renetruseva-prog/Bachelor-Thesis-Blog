@@ -1,13 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
 import TopicChip from '../components/TopicChip.astro';
-import { team, contacts } from '../data/team';
+import { team } from '../data/team';
 ---
 
 <Base title="Team" description="Team roles: who does what.">
   <p class="eyebrow">Team roles</p>
   <h1>Who does what</h1>
-  <p class="lead">The people involved in the project and how responsibilities are divided.</p>
+  <p class="lead">The people involved in the project and their roles in the team.</p>
 
   <div class="grid">
     {
@@ -20,33 +20,10 @@ import { team, contacts } from '../data/team';
               <TopicChip topic={t} />
             ))}
           </div>
-          <ul>
-            {m.responsibilities.map((r) => (
-              <li>{r}</li>
-            ))}
-          </ul>
         </article>
       ))
     }
   </div>
-
-  <h2>Client, coaches & experts</h2>
-  <table>
-    <thead>
-      <tr><th>Name</th><th>Role</th><th>Organisation</th></tr>
-    </thead>
-    <tbody>
-      {
-        contacts.map((c) => (
-          <tr>
-            <td>{c.name}</td>
-            <td>{c.role}</td>
-            <td>{c.organisation}</td>
-          </tr>
-        ))
-      }
-    </tbody>
-  </table>
 </Base>
 
 <style>
@@ -54,7 +31,7 @@ import { team, contacts } from '../data/team';
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
     gap: 1rem;
-    margin: 2.5rem 0 3rem;
+    margin: 2.5rem 0 0;
   }
   .card h2 {
     margin: 0;
@@ -69,10 +46,5 @@ import { team, contacts } from '../data/team';
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-  }
-  ul {
-    margin: 1rem 0 0;
-    padding-left: 1.1rem;
-    font-size: 0.92rem;
   }
 </style>
