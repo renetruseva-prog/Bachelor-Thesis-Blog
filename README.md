@@ -1,4 +1,4 @@
-# Bachelor Thesis Journal
+# Bachelor Thesis Blog
 
 Process blog for my bachelor thesis (DEVINE, Howest), built with [Astro](https://astro.build).
 
