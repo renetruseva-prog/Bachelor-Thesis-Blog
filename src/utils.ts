@@ -25,3 +25,12 @@ export function slugify(value: string): string {
 export function formatDate(date: Date, opts: Intl.DateTimeFormatOptions = {}): string {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', ...opts });
 }
+
+/** Hours with at most one decimal, e.g. 7.5 */
+export function formatHours(hours: number): string {
+  return hours.toLocaleString('en-GB', { maximumFractionDigits: 1 });
+}
+
+export function sumHours(entries: { hours: number }[]): number {
+  return entries.reduce((sum, e) => sum + e.hours, 0);
+}

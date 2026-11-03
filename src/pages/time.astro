@@ -1,11 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import TopicChip from '../components/TopicChip.astro';
-import { TOPICS, TOPIC_KEYS } from '../consts';
+import MemberStatsTable from '../components/MemberStatsTable.astro';
+import { TEAM, MEMBER_KEYS, TOPICS, TOPIC_KEYS } from '../consts';
 import { timelog, type TimeEntry } from '../data/timelog';
-import { formatDate } from '../utils';
-
-const total = timelog.reduce((sum, e) => sum + e.hours, 0);
+import { formatDate, formatHours as fmt, sumHours } from '../utils';
 
 // Group entries per day, newest first
 const byDay = new Map<string, TimeEntry[]>();
@@ -14,50 +13,72 @@ for (const entry of [...timelog].sort((a, b) => b.date.localeCompare(a.date))) {
 }
 const days = [...byDay].map(([date, entries]) => ({
   date: new Date(date),
-  entries,
-  hours: entries.reduce((sum, e) => sum + e.hours, 0),
+  // Within a day, list entries per member in team order.
+  entries: entries.sort((a, b) => MEMBER_KEYS.indexOf(a.member) - MEMBER_KEYS.indexOf(b.member)),
+  hours: sumHours(entries),
 }));
 const maxDay = Math.max(1, ...days.map((d) => d.hours));
-const average = days.length ? total / days.length : 0;
 
-const perTopic = TOPIC_KEYS.map((key) => ({
-  key,
-  hours: timelog.filter((e) => e.topic === key).reduce((sum, e) => sum + e.hours, 0),
-})).filter((t) => t.hours > 0);
+/** Total, days worked and average per day for a set of entries. */
+function summarise(entries: TimeEntry[]) {
+  const hours = sumHours(entries);
+  const dayCount = new Set(entries.map((e) => e.date)).size;
+  return [fmt(hours), dayCount, fmt(dayCount ? hours / dayCount : 0)];
+}
 
-const fmt = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 1 });
+const members = MEMBER_KEYS.map((key) => {
+  const entries = timelog.filter((e) => e.member === key);
+  const topics = TOPIC_KEYS.map((topic) => ({
+    key: topic,
+    hours: sumHours(entries.filter((e) => e.topic === topic)),
+  })).filter((t) => t.hours > 0);
+  return { key, name: TEAM[key].name, values: summarise(entries), topics };
+});
 ---
 
 <Base title="Time tracking" description="Overview of hours spent per day on the bachelor thesis.">
   <p class="eyebrow">Time tracking</p>
   <h1>Hours per day</h1>
-  <p class="lead">An overview of how much time I spend on my bachelor thesis, per day and per topic.</p>
+  <p class="lead">An overview of how much time each of us spends on our bachelor thesis, per day and per topic.</p>
 
-  <dl class="stats">
-    <div><dt>Total hours</dt><dd>{fmt(total)}</dd></div>
-    <div><dt>Days worked</dt><dd>{days.length}</dd></div>
-    <div><dt>Average per day</dt><dd>{fmt(average)}</dd></div>
-  </dl>
+  <MemberStatsTable
+    columns={['Total hours', 'Days worked', 'Average per day']}
+    rows={members}
+    total={summarise(timelog)}
+  />
 
   {
-    perTopic.length > 0 && (
+    members.some((m) => m.topics.length > 0) && (
       <section>
         <h2>Per topic</h2>
-        <div class="split" role="img" aria-label="Share of hours per topic">
-          {perTopic.map((t) => (
-            <span
-              style={`flex: ${t.hours}; background: ${TOPICS[t.key].color}`}
-              title={`${TOPICS[t.key].label}: ${fmt(t.hours)}h`}
-            />
+        <div class="members">
+          {members.map((m) => (
+            <div class="member">
+              <h3>{m.name}</h3>
+              {m.topics.length === 0 ? (
+                <p class="note">No hours logged yet.</p>
+              ) : (
+                <>
+                  <div class="split" role="img" aria-label={`Share of hours per topic for ${m.name}`}>
+                    {m.topics.map((t) => (
+                      <span
+                        style={`flex: ${t.hours}; background: ${TOPICS[t.key].color}`}
+                        title={`${TOPICS[t.key].label}: ${fmt(t.hours)}h`}
+                      />
+                    ))}
+                  </div>
+                  <ul class="legend">
+                    {m.topics.map((t) => (
+                      <li>
+                        <TopicChip topic={t.key} link={false} /> {fmt(t.hours)}h
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
           ))}
         </div>
-        <ul class="legend">
-          {perTopic.map((t) => (
-            <li>
-              <TopicChip topic={t.key} link={false} /> {fmt(t.hours)}h
-            </li>
-          ))}
-        </ul>
       </section>
     )
   }
@@ -84,6 +105,7 @@ const fmt = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 1 
               <ul class="entries">
                 {day.entries.map((e) => (
                   <li>
+                    <span class="who">{TEAM[e.member].name}</span>
                     <TopicChip topic={e.topic} link={false} />
                     <span>{e.task}</span>
                     <span class="h">{fmt(e.hours)}h</span>
@@ -99,26 +121,13 @@ const fmt = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 1 
 </Base>
 
 <style>
-  .stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2.5rem;
-    margin: 2rem 0 1rem;
+  .members {
+    display: grid;
+    gap: 1.75rem;
   }
-  .stats div {
-    display: flex;
-    flex-direction: column-reverse;
-  }
-  dt {
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-  dd {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    font-weight: 600;
-    line-height: 1.1;
+  .member h3 {
+    margin: 0 0 0.6rem;
+    font-size: 1rem;
   }
   .split {
     display: flex;
@@ -188,6 +197,10 @@ const fmt = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 1 
     display: flex;
     align-items: center;
     gap: 0.75rem;
+  }
+  .entries .who {
+    min-width: 8.5rem;
+    font-weight: 500;
   }
   .entries .h {
     margin-left: auto;
