@@ -3,7 +3,8 @@
 interface Props {
   /** Column headings after the "Team member" column. */
   columns: string[];
-  rows: { name: string; values: (string | number)[] }[];
+  /** `color` adds a coloured dot before the name. */
+  rows: { name: string; color?: string; values: (string | number)[] }[];
   total: (string | number)[];
 }
 
@@ -22,7 +23,10 @@ const { columns, rows, total } = Astro.props;
       {
         rows.map((row) => (
           <tr>
-            <th scope="row">{row.name}</th>
+            <th scope="row">
+              {row.color && <span class="dot" style={`background: ${row.color}`} aria-hidden="true" />}
+              {row.name}
+            </th>
             {row.values.map((v) => <td>{v}</td>)}
           </tr>
         ))
@@ -71,6 +75,14 @@ const { columns, rows, total } = Astro.props;
   }
   tbody th {
     font-weight: 500;
+  }
+  .dot {
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-right: 0.5em;
+    border-radius: 50%;
+    vertical-align: 0.05em;
   }
   tfoot th,
   tfoot td {

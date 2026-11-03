@@ -9,10 +9,11 @@ export const SITE = {
 };
 
 // Team members. The key is what you write in a post's `authors` frontmatter and in a timelog entry's `member`.
+// `color` marks the member in charts and tables, `tint` is the soft background.
 export const TEAM = {
-  renet: { name: 'Renet Ruseva' },
-  member2: { name: 'Ulrika Garisone' },
-  member3: { name: 'Liviu Balan' },
+  renet: { name: 'Renet Ruseva', color: '#C2577A', tint: '#F8E3EA' },
+  member2: { name: 'Ulrika Garisone', color: '#5B6FD0', tint: '#E5E9FA' },
+  member3: { name: 'Liviu Balan', color: '#D08A2E', tint: '#FAEEDC' },
 } as const;
 
 export type MemberKey = keyof typeof TEAM;
