@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import FilterablePosts from '../components/FilterablePosts.astro';
+import { SITE } from '../consts';
+import { getPosts } from '../utils';
+import { timelog } from '../data/timelog';
+
+const posts = await getPosts();
+const totalHours = timelog.reduce((sum, e) => sum + e.hours, 0);
+const days = new Set(timelog.map((e) => e.date)).size;
+---
+
+<Base>
+  <section class="hero">
+    <p class="eyebrow">Bachelor thesis · {SITE.client}</p>
+    <h1>{SITE.title}</h1>
+    <p class="lead">
+      A running log of my research, design and development process — including feedback, planning, hours and
+      an honest account of how I use AI.
+    </p>
+    <dl class="stats">
+      <div><dt>Posts</dt><dd>{posts.length}</dd></div>
+      <div><dt>Hours logged</dt><dd>{totalHours}</dd></div>
+      <div><dt>Days worked</dt><dd>{days}</dd></div>
+    </dl>
+  </section>
+
+  <FilterablePosts posts={posts} />
+</Base>
+
+<style>
+  .hero {
+    margin-bottom: 3rem;
+  }
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    margin: 2rem 0 0;
+  }
+  .stats div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  dt {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+</style>

@@ -1,0 +1,86 @@
+---
+import TopicChip from './TopicChip.astro';
+import { TOPICS } from '../consts';
+import { formatDate, slugify, url, type Post } from '../utils';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, topics, tags, placeholder } = post.data;
+const accent = TOPICS[topics[0]].color;
+---
+
+<article class="post" data-topics={topics.join(' ')} style={`--c: ${accent}`}>
+  <div class="meta">
+    <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+    {placeholder && <span class="placeholder">Placeholder</span>}
+  </div>
+  <h2><a href={url(`/blog/${post.id}`)}>{title}</a></h2>
+  <p>{description}</p>
+  <div class="labels">
+    {topics.map((topic) => <TopicChip topic={topic} />)}
+    {tags.map((tag) => <a class="tag" href={url(`/tags/${slugify(tag)}`)}>{tag}</a>)}
+  </div>
+</article>
+
+<style>
+  .post {
+    position: relative;
+    padding: 1.5rem 1.5rem 1.4rem 1.75rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .post::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1.25rem;
+    bottom: 1.25rem;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--c);
+  }
+  .post:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -16px rgb(47 58 51 / 0.35);
+  }
+  .meta {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .placeholder {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    border: 1px dashed var(--muted);
+  }
+  h2 {
+    font-size: 1.35rem;
+    margin: 0.4rem 0 0.4rem;
+  }
+  h2 a {
+    text-decoration: none;
+  }
+  p {
+    color: var(--muted);
+    margin-bottom: 0.9rem;
+  }
+  .labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.6rem;
+    align-items: center;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+import { SITE } from '../consts';
+---
+
+<footer>
+  <div class="container">
+    <p>{SITE.author} · Bachelor thesis · {SITE.school}</p>
+    <p class="palette" aria-hidden="true">
+      <span style="background: var(--blossom)"></span>
+      <span style="background: var(--butter)"></span>
+      <span style="background: var(--accent)"></span>
+      <span style="background: var(--sky)"></span>
+      <span style="background: var(--lilac)"></span>
+    </p>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--line);
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-block: 1.5rem;
+  }
+  p {
+    margin: 0;
+  }
+  .palette {
+    display: flex;
+    gap: 0.3rem;
+  }
+  .palette span {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+  }
+</style>

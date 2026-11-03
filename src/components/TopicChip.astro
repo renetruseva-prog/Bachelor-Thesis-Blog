@@ -1,0 +1,25 @@
+---
+import { TOPICS, type TopicKey } from '../consts';
+import { url } from '../utils';
+
+interface Props {
+  topic: TopicKey;
+  link?: boolean;
+}
+
+const { topic, link = true } = Astro.props;
+const t = TOPICS[topic];
+const style = `--c: ${t.color}; --t: ${t.tint}`;
+---
+
+{
+  link ? (
+    <a class="chip" href={url(`/topics/${topic}`)} style={style}>
+      {t.label}
+    </a>
+  ) : (
+    <span class="chip" style={style}>
+      {t.label}
+    </span>
+  )
+}

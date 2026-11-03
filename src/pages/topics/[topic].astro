@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { TOPICS, TOPIC_KEYS, type TopicKey } from '../../consts';
+import { getPosts, url } from '../../utils';
+
+export function getStaticPaths() {
+  return TOPIC_KEYS.map((topic) => ({ params: { topic } }));
+}
+
+const topic = Astro.params.topic as TopicKey;
+const t = TOPICS[topic];
+const posts = (await getPosts()).filter((p) => p.data.topics.includes(topic));
+---
+
+<Base title={t.label} description={t.description}>
+  <a class="back" href={url('/topics')}>← All topics</a>
+  <p class="eyebrow">
+    <span class="chip" style={`--c: ${t.color}; --t: ${t.tint}`}>Topic</span>
+  </p>
+  <h1>{t.label}</h1>
+  <p class="lead">{t.description}</p>
+
+  <div class="list">
+    {posts.map((post) => <PostCard post={post} />)}
+    {posts.length === 0 && <p class="empty">No posts on this topic yet.</p>}
+  </div>
+</Base>
+
+<style>
+  .back {
+    display: inline-block;
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 2rem;
+  }
+  .list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+  .empty {
+    color: var(--muted);
+  }
+</style>

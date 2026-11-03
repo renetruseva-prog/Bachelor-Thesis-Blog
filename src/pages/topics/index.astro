@@ -1,0 +1,104 @@
+---
+import Base from '../../layouts/Base.astro';
+import { TOPICS, TOPIC_KEYS } from '../../consts';
+import { getPosts, slugify, url } from '../../utils';
+
+const posts = await getPosts();
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+}
+const tags = [...tagCounts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+---
+
+<Base title="Topics" description="Browse posts by topic or tag.">
+  <p class="eyebrow">Browse</p>
+  <h1>Topics</h1>
+  <p class="lead">Every post belongs to one or more topics. Pick one to see only those posts.</p>
+
+  <div class="grid">
+    {
+      TOPIC_KEYS.map((key) => {
+        const t = TOPICS[key];
+        const count = posts.filter((p) => p.data.topics.includes(key)).length;
+        return (
+          <a class="topic" href={url(`/topics/${key}`)} style={`--c: ${t.color}; --t: ${t.tint}`}>
+            <span class="label">{t.label}</span>
+            <span class="desc">{t.description}</span>
+            <span class="count">
+              {count} post{count === 1 ? '' : 's'}
+            </span>
+          </a>
+        );
+      })
+    }
+  </div>
+
+  {
+    tags.length > 0 && (
+      <>
+        <h2>Tags</h2>
+        <p class="tags">
+          {tags.map(([tag, n]) => (
+            <a class="tag" href={url(`/tags/${slugify(tag)}`)}>
+              {tag} <small>({n})</small>
+            </a>
+          ))}
+        </p>
+      </>
+    )
+  }
+</Base>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+  .topic {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.25rem 1.4rem;
+    border-radius: var(--radius);
+    background: var(--t);
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: border-color 0.15s ease;
+  }
+  .topic:hover {
+    color: var(--ink);
+    border-color: var(--c);
+  }
+  .label {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .label::before {
+    content: '';
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--c);
+  }
+  .desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    flex: 1;
+  }
+  .count {
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+</style>

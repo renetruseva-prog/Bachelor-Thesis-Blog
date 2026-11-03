@@ -1,0 +1,207 @@
+---
+import Base from '../layouts/Base.astro';
+import TopicChip from '../components/TopicChip.astro';
+import { TOPICS, TOPIC_KEYS } from '../consts';
+import { timelog, type TimeEntry } from '../data/timelog';
+import { formatDate } from '../utils';
+
+const total = timelog.reduce((sum, e) => sum + e.hours, 0);
+
+// Group entries per day, newest first
+const byDay = new Map<string, TimeEntry[]>();
+for (const entry of [...timelog].sort((a, b) => b.date.localeCompare(a.date))) {
+  byDay.set(entry.date, [...(byDay.get(entry.date) ?? []), entry]);
+}
+const days = [...byDay].map(([date, entries]) => ({
+  date: new Date(date),
+  entries,
+  hours: entries.reduce((sum, e) => sum + e.hours, 0),
+}));
+const maxDay = Math.max(1, ...days.map((d) => d.hours));
+const average = days.length ? total / days.length : 0;
+
+const perTopic = TOPIC_KEYS.map((key) => ({
+  key,
+  hours: timelog.filter((e) => e.topic === key).reduce((sum, e) => sum + e.hours, 0),
+})).filter((t) => t.hours > 0);
+
+const fmt = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 1 });
+---
+
+<Base title="Time tracking" description="Overview of hours spent per day on the bachelor thesis.">
+  <p class="eyebrow">Time tracking</p>
+  <h1>Hours per day</h1>
+  <p class="lead">An overview of how much time I spend on my bachelor thesis, per day and per topic.</p>
+
+  <dl class="stats">
+    <div><dt>Total hours</dt><dd>{fmt(total)}</dd></div>
+    <div><dt>Days worked</dt><dd>{days.length}</dd></div>
+    <div><dt>Average per day</dt><dd>{fmt(average)}</dd></div>
+  </dl>
+
+  {
+    perTopic.length > 0 && (
+      <section>
+        <h2>Per topic</h2>
+        <div class="split" role="img" aria-label="Share of hours per topic">
+          {perTopic.map((t) => (
+            <span
+              style={`flex: ${t.hours}; background: ${TOPICS[t.key].color}`}
+              title={`${TOPICS[t.key].label}: ${fmt(t.hours)}h`}
+            />
+          ))}
+        </div>
+        <ul class="legend">
+          {perTopic.map((t) => (
+            <li>
+              <TopicChip topic={t.key} link={false} /> {fmt(t.hours)}h
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section>
+    <h2>Per day</h2>
+    {days.length === 0 && <p class="note">No hours logged yet — add entries in src/data/timelog.ts.</p>}
+    <ol class="days">
+      {
+        days.map((day) => (
+          <li class="day">
+            <details>
+              <summary>
+                <time datetime={day.date.toISOString().slice(0, 10)}>
+                  {formatDate(day.date, { weekday: 'short' })}
+                </time>
+                <span class="bar" style={`width: ${(day.hours / maxDay) * 100}%`}>
+                  {day.entries.map((e) => (
+                    <span style={`flex: ${e.hours}; background: ${TOPICS[e.topic].color}`} />
+                  ))}
+                </span>
+                <span class="hours">{fmt(day.hours)}h</span>
+              </summary>
+              <ul class="entries">
+                {day.entries.map((e) => (
+                  <li>
+                    <TopicChip topic={e.topic} link={false} />
+                    <span>{e.task}</span>
+                    <span class="h">{fmt(e.hours)}h</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Base>
+
+<style>
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    margin: 2rem 0 1rem;
+  }
+  .stats div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  dt {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .split {
+    display: flex;
+    gap: 3px;
+    height: 0.9rem;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+  }
+  .days {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  summary {
+    display: grid;
+    grid-template-columns: 9rem 1fr 3.5rem;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.92rem;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:hover,
+  details[open] summary {
+    background: var(--surface);
+  }
+  time {
+    color: var(--muted);
+  }
+  .bar {
+    display: flex;
+    gap: 2px;
+    height: 0.75rem;
+    min-width: 0.75rem;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .hours {
+    text-align: right;
+    font-weight: 600;
+  }
+  .entries {
+    list-style: none;
+    margin: 0.25rem 0 0.75rem;
+    padding: 0 0.75rem 0 10.75rem;
+    display: grid;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+  }
+  .entries li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .entries .h {
+    margin-left: auto;
+    color: var(--muted);
+  }
+  @media (max-width: 40rem) {
+    summary {
+      grid-template-columns: 6.5rem 1fr 3rem;
+    }
+    .entries {
+      padding-left: 0.75rem;
+    }
+    .entries li {
+      flex-wrap: wrap;
+    }
+  }
+</style>

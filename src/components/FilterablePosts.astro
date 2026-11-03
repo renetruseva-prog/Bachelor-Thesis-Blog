@@ -1,0 +1,145 @@
+---
+// Post list with topic filter buttons.
+// Without JS the buttons are plain links to /topics/<key>; with JS they filter in place
+// and keep the choice in the URL (?topic=ux) so a filtered view can be shared.
+import PostCard from './PostCard.astro';
+import { TOPICS, TOPIC_KEYS } from '../consts';
+import { url, type Post } from '../utils';
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+const counts = Object.fromEntries(
+  TOPIC_KEYS.map((key) => [key, posts.filter((p) => p.data.topics.includes(key)).length]),
+);
+---
+
+<section class="filterable">
+  <div class="filters" role="group" aria-label="Filter posts by topic">
+    <a class="filter" href={url('/')} data-filter="all" aria-pressed="true">
+      All <span class="count">{posts.length}</span>
+    </a>
+    {
+      TOPIC_KEYS.map((key) => (
+        <a
+          class="filter"
+          href={url(`/topics/${key}`)}
+          data-filter={key}
+          aria-pressed="false"
+          style={`--c: ${TOPICS[key].color}; --t: ${TOPICS[key].tint}`}
+        >
+          {TOPICS[key].label} <span class="count">{counts[key]}</span>
+        </a>
+      ))
+    }
+  </div>
+
+  <p class="status" aria-live="polite"></p>
+
+  <div class="list">
+    {posts.map((post) => <PostCard post={post} />)}
+  </div>
+
+  <p class="empty" hidden>No posts on this topic yet.</p>
+</section>
+
+<script>
+  function initFilter(root: HTMLElement) {
+    const buttons = [...root.querySelectorAll<HTMLAnchorElement>('[data-filter]')];
+    const posts = [...root.querySelectorAll<HTMLElement>('[data-topics]')];
+    const empty = root.querySelector<HTMLElement>('.empty')!;
+    const status = root.querySelector<HTMLElement>('.status')!;
+
+    function apply(filter: string, updateUrl = true) {
+      let visible = 0;
+      for (const post of posts) {
+        const show = filter === 'all' || post.dataset.topics!.split(' ').includes(filter);
+        post.hidden = !show;
+        if (show) visible++;
+      }
+      for (const b of buttons) b.setAttribute('aria-pressed', String(b.dataset.filter === filter));
+      empty.hidden = visible > 0;
+      status.textContent = filter === 'all' ? '' : `${visible} post${visible === 1 ? '' : 's'}`;
+
+      if (updateUrl) {
+        const u = new URL(location.href);
+        if (filter === 'all') u.searchParams.delete('topic');
+        else u.searchParams.set('topic', filter);
+        history.replaceState(null, '', u);
+      }
+    }
+
+    for (const b of buttons) {
+      b.setAttribute('role', 'button');
+      b.addEventListener('click', (e) => {
+        e.preventDefault();
+        apply(b.dataset.filter!);
+      });
+    }
+
+    const initial = new URL(location.href).searchParams.get('topic');
+    if (initial && buttons.some((b) => b.dataset.filter === initial)) apply(initial, false);
+  }
+
+  document.querySelectorAll<HTMLElement>('.filterable').forEach(initFilter);
+</script>
+
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .filter[data-filter]:not([data-filter='all'])::before {
+    content: '';
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+    background: var(--c);
+  }
+  .filter:hover {
+    color: var(--ink);
+    border-color: var(--c, var(--accent));
+  }
+  .filter[aria-pressed='true'] {
+    background: var(--t, var(--accent-soft));
+    border-color: var(--c, var(--accent));
+  }
+  .count {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .status {
+    min-height: 1.5em;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .list {
+    display: grid;
+    gap: 1rem;
+  }
+  .empty {
+    color: var(--muted);
+    padding: 2rem 0;
+  }
+</style>

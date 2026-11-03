@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import TopicChip from '../components/TopicChip.astro';
+import { SITE, TOPIC_KEYS } from '../consts';
+import { url } from '../utils';
+---
+
+<Base title="About" description="About this process blog and how it is organised.">
+  <div class="prose">
+    <p class="eyebrow">About</p>
+    <h1>About this blog</h1>
+    <p class="lead">
+      This blog documents the process and progress of my bachelor thesis at {SITE.school} for {SITE.client}.
+    </p>
+
+    <h2>What you'll find here</h2>
+    <ul>
+      <li><strong>Research</strong> per pillar — UX research, design and development — both textual and visual.</li>
+      <li><strong>Process</strong> of the result: how it evolved and why decisions were made.</li>
+      <li><strong>Feedback reports</strong> from meetings with the client, coaches and experts.</li>
+      <li><strong>Team roles</strong> — see <a href={url('/team')}>Team</a>.</li>
+      <li><strong>Time tracking</strong> — hours per day, see <a href={url('/time')}>Time</a>.</li>
+      <li><strong>Planning</strong> — detailed project planning, see <a href={url('/planning')}>Planning</a>.</li>
+      <li><strong>AI guidance</strong> — how and where AI was used, reviewed critically.</li>
+    </ul>
+
+    <h2>Topics</h2>
+    <p>Every post is labelled with one or more topics, so you can filter on what interests you:</p>
+    <p class="labels">{TOPIC_KEYS.map((t) => <TopicChip topic={t} />)}</p>
+
+    <h2>On the use of AI</h2>
+    <div class="note">
+      <p>
+        <em>Placeholder — write your AI policy here.</em> For example: which tools you use, for which tasks, how you
+        verify the output, and what you deliberately do not use AI for.
+      </p>
+      <p>Every post where AI played a role is labelled <strong>AI guidance</strong> and describes:</p>
+      <ul>
+        <li>the tool and the prompt or question,</li>
+        <li>what the output was,</li>
+        <li>what I kept, changed or rejected — and why.</li>
+      </ul>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .note ul {
+    margin-bottom: 0;
+  }
+</style>
