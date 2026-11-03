@@ -1,0 +1,84 @@
+---
+// Table with one row per team member and a team total row at the bottom.
+interface Props {
+  /** Column headings after the "Team member" column. */
+  columns: string[];
+  rows: { name: string; values: (string | number)[] }[];
+  total: (string | number)[];
+}
+
+const { columns, rows, total } = Astro.props;
+---
+
+<div class="stats-wrap">
+  <table class="stats">
+    <thead>
+      <tr>
+        <th scope="col">Team member</th>
+        {columns.map((c) => <th scope="col">{c}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr>
+            <th scope="row">{row.name}</th>
+            {row.values.map((v) => <td>{v}</td>)}
+          </tr>
+        ))
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="row">Team total</th>
+        {total.map((v) => <td>{v}</td>)}
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<style>
+  .stats-wrap {
+    margin: 2rem 0 0;
+    overflow-x: auto;
+  }
+  .stats {
+    width: 100%;
+    max-width: 40rem;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  th,
+  td {
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
+  td {
+    text-align: right;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  thead th {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  thead th:not(:first-child) {
+    text-align: right;
+  }
+  tbody th {
+    font-weight: 500;
+  }
+  tfoot th,
+  tfoot td {
+    border-bottom: none;
+    border-top: 2px solid var(--line);
+  }
+  tfoot th {
+    color: var(--muted);
+    font-weight: 500;
+  }
+</style>
