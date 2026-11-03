@@ -3,7 +3,7 @@
 // Without JS the buttons are plain links to /topics/<key>; with JS they filter in place
 // and keep the choice in the URL (?topic=ux) so a filtered view can be shared.
 import PostCard from './PostCard.astro';
-import { TOPICS, TOPIC_KEYS } from '../consts';
+import { TOPICS, MAIN_TOPIC_KEYS } from '../consts';
 import { url, type Post } from '../utils';
 
 interface Props {
@@ -11,10 +11,8 @@ interface Props {
 }
 
 const { posts } = Astro.props;
-// Only these topics get a filter button.
-const FILTER_KEYS = TOPIC_KEYS.slice(0, 3);
 const counts = Object.fromEntries(
-  FILTER_KEYS.map((key) => [key, posts.filter((p) => p.data.topics.includes(key)).length]),
+  MAIN_TOPIC_KEYS.map((key) => [key, posts.filter((p) => p.data.topics.includes(key)).length]),
 );
 ---
 
@@ -24,7 +22,7 @@ const counts = Object.fromEntries(
       All <span class="count">{posts.length}</span>
     </a>
     {
-      FILTER_KEYS.map((key) => (
+      MAIN_TOPIC_KEYS.map((key) => (
         <a
           class="filter"
           href={url(`/topics/${key}`)}

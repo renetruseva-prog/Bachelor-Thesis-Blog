@@ -73,3 +73,6 @@ export const TOPICS = {
 
 export type TopicKey = keyof typeof TOPICS;
 export const TOPIC_KEYS = Object.keys(TOPICS) as [TopicKey, ...TopicKey[]];
+
+// Topics shown on the home page filters and the Topics page. The other topics still work on posts.
+export const MAIN_TOPIC_KEYS = TOPIC_KEYS.slice(0, 3);
