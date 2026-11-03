@@ -31,7 +31,7 @@ Process blog for my bachelor thesis (DEVINE, Howest), built with [Astro](https:/
    - `_template-feedback.md` — client / coach / expert meeting report
    - `_template-ai.md` — AI usage log (critical & transparent)
 2. Rename it without the leading `_` (e.g. `2026-11-10-user-interviews.md`).
-3. Fill in the frontmatter. `topics` decides which filters the post shows up under:
+3. Fill in the frontmatter. `authors` is who wrote it (`renet`, `member2`, `member3`). `topics` decides which filters the post shows up under:
    `ux`, `design`, `dev`, `process`, `feedback`, `planning`, `team`, `ai`.
 4. Set `draft: false` (or remove it) to publish.
 
