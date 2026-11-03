@@ -68,7 +68,7 @@ const first = templates[0];
       <div class="options">
         {
           MEMBER_KEYS.map((key, i) => (
-            <label class="option">
+            <label class="option" style={`--c: ${TEAM[key].color}; --t: ${TEAM[key].tint}`}>
               <input type="checkbox" name="authors" value={key} checked={i === 0} /> {TEAM[key].name}
             </label>
           ))

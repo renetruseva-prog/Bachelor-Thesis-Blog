@@ -32,7 +32,7 @@ const members = MEMBER_KEYS.map((key) => {
     key: topic,
     hours: sumHours(entries.filter((e) => e.topic === topic)),
   })).filter((t) => t.hours > 0);
-  return { key, name: TEAM[key].name, values: summarise(entries), topics };
+  return { key, name: TEAM[key].name, color: TEAM[key].color, tint: TEAM[key].tint, values: summarise(entries), topics };
 });
 ---
 
@@ -53,7 +53,7 @@ const members = MEMBER_KEYS.map((key) => {
         <h2>Per topic</h2>
         <div class="members">
           {members.map((m) => (
-            <div class="member">
+            <div class="member" style={`--c: ${m.color}; --t: ${m.tint}`}>
               <h3>{m.name}</h3>
               {m.topics.length === 0 ? (
                 <p class="note">No hours logged yet.</p>
@@ -85,6 +85,11 @@ const members = MEMBER_KEYS.map((key) => {
 
   <section>
     <h2>Per day</h2>
+    <ul class="key" aria-label="Bar colours per team member">
+      {members.map((m) => (
+        <li><span style={`background: ${m.color}`} />{m.name}</li>
+      ))}
+    </ul>
     {days.length === 0 && <p class="note">No hours logged yet — add entries in src/data/timelog.ts.</p>}
     <ol class="days">
       {
@@ -97,7 +102,10 @@ const members = MEMBER_KEYS.map((key) => {
                 </time>
                 <span class="bar" style={`width: ${(day.hours / maxDay) * 100}%`}>
                   {day.entries.map((e) => (
-                    <span style={`flex: ${e.hours}; background: ${TOPICS[e.topic].color}`} />
+                    <span
+                      style={`flex: ${e.hours}; background: ${TEAM[e.member].color}`}
+                      title={`${TEAM[e.member].name}: ${fmt(e.hours)}h`}
+                    />
                   ))}
                 </span>
                 <span class="hours">{fmt(day.hours)}h</span>
@@ -105,7 +113,9 @@ const members = MEMBER_KEYS.map((key) => {
               <ul class="entries">
                 {day.entries.map((e) => (
                   <li>
-                    <span class="who">{TEAM[e.member].name}</span>
+                    <span class="who" style={`--c: ${TEAM[e.member].color}; --t: ${TEAM[e.member].tint}`}>
+                      {TEAM[e.member].name}
+                    </span>
                     <TopicChip topic={e.topic} link={false} />
                     <span>{e.task}</span>
                     <span class="h">{fmt(e.hours)}h</span>
@@ -126,8 +136,38 @@ const members = MEMBER_KEYS.map((key) => {
     gap: 1.75rem;
   }
   .member h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     margin: 0 0 0.6rem;
     font-size: 1rem;
+  }
+  .member h3::before {
+    content: '';
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    background: var(--c);
+  }
+  .key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .key li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .key span {
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
   }
   .split {
     display: flex;
@@ -199,8 +239,13 @@ const members = MEMBER_KEYS.map((key) => {
     gap: 0.75rem;
   }
   .entries .who {
-    min-width: 8.5rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: var(--t);
+    border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+    font-size: 0.8rem;
     font-weight: 500;
+    white-space: nowrap;
   }
   .entries .h {
     margin-left: auto;

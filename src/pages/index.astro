@@ -12,6 +12,7 @@ const memberStats = MEMBER_KEYS.map((key) => {
   const entries = timelog.filter((e) => e.member === key);
   return {
     name: TEAM[key].name,
+    color: TEAM[key].color,
     values: [
       posts.filter((p) => p.data.authors.includes(key)).length,
       formatHours(sumHours(entries)),
