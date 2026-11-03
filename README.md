@@ -1,6 +1,6 @@
 # Bachelor Thesis Blog
 
-Process blog for my bachelor thesis (DEVINE, Howest), built with [Astro](https://astro.build).
+Process blog for my team's bachelor thesis (DEVINE, Howest), built with [Astro](https://astro.build).
 
 ## Commands
 
