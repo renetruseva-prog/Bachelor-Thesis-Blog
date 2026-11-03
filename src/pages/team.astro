@@ -7,7 +7,7 @@ import { team } from '../data/team';
 <Base title="Team" description="Team roles: who does what.">
   <p class="eyebrow">Team roles</p>
   <h1>Who does what</h1>
-  <p class="lead">The people involved in the project and how responsibilities are divided.</p>
+  <p class="lead">The people involved in the project and their roles in the team.</p>
 
   <div class="grid">
     {
@@ -20,11 +20,6 @@ import { team } from '../data/team';
               <TopicChip topic={t} />
             ))}
           </div>
-          <ul>
-            {m.responsibilities.map((r) => (
-              <li>{r}</li>
-            ))}
-          </ul>
         </article>
       ))
     }
@@ -51,10 +46,5 @@ import { team } from '../data/team';
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-  }
-  ul {
-    margin: 1rem 0 0;
-    padding-left: 1.1rem;
-    font-size: 0.92rem;
   }
 </style>
