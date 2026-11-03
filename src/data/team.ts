@@ -6,21 +6,20 @@ export interface Member {
   topics: TopicKey[];
 }
 
-// Placeholders — replace with the real team.
 export const team: Member[] = [
   {
-    name: 'Team member 1',
-    role: 'Role (e.g. UX researcher)',
-    topics: ['ux'],
+    name: 'Renet Ruseva',
+    role: 'Team worker, Resource investigator, Monitor/Evaluator',
+    topics: ['ux', 'dev'],
   },
   {
-    name: 'Team member 2',
-    role: 'Role (e.g. Designer)',
-    topics: ['design'],
+    name: 'Ulrika Garisone',
+    role: 'Completer/Finisher, Implementer, Plant',
+    topics: ['ux', 'design'],
   },
   {
-    name: 'Team member 3',
-    role: 'Role (e.g. Developer)',
-    topics: ['dev'],
+    name: 'Liviu Balan',
+    role: 'Team worker, Resource investigator, Plant',
+    topics: ['ux', 'design'],
   },
 ];
