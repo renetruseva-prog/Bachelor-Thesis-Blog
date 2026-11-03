@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import TopicChip from '../../components/TopicChip.astro';
+import ImageLightbox from '../../components/ImageLightbox.astro';
 import { formatDate, getPosts, slugify, url } from '../../utils';
 
 export async function getStaticPaths() {
@@ -70,6 +71,8 @@ const { Content } = await render(post);
       }
     </nav>
   </article>
+
+  <ImageLightbox selector=".content img" />
 </Base>
 
 <style>
@@ -100,6 +103,23 @@ const { Content } = await render(post);
   }
   .content :global(img) {
     margin: 1rem 0;
+  }
+  /* Images written on consecutive lines (no blank line between them) sit side by side. */
+  .content :global(p:has(> img + img)) {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 0.75rem;
+    align-items: start;
+  }
+  .content :global(p:has(> img + img) img) {
+    margin: 0;
+    width: 100%;
+  }
+  @media (max-width: 40rem) {
+    .content :global(p:has(> img + img)) {
+      grid-auto-flow: row;
+    }
   }
   .content :global(figure) {
     margin: 2rem 0;
