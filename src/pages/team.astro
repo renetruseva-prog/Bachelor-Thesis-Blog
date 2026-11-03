@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import TopicChip from '../components/TopicChip.astro';
-import { team, contacts } from '../data/team';
+import { team } from '../data/team';
 ---
 
 <Base title="Team" description="Team roles: who does what.">
@@ -29,24 +29,6 @@ import { team, contacts } from '../data/team';
       ))
     }
   </div>
-
-  <h2>Client, coaches & experts</h2>
-  <table>
-    <thead>
-      <tr><th>Name</th><th>Role</th><th>Organisation</th></tr>
-    </thead>
-    <tbody>
-      {
-        contacts.map((c) => (
-          <tr>
-            <td>{c.name}</td>
-            <td>{c.role}</td>
-            <td>{c.organisation}</td>
-          </tr>
-        ))
-      }
-    </tbody>
-  </table>
 </Base>
 
 <style>
@@ -54,7 +36,7 @@ import { team, contacts } from '../data/team';
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
     gap: 1rem;
-    margin: 2.5rem 0 3rem;
+    margin: 2.5rem 0 0;
   }
   .card h2 {
     margin: 0;

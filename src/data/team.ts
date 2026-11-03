@@ -7,12 +7,6 @@ export interface Member {
   responsibilities: string[];
 }
 
-export interface Contact {
-  name: string;
-  role: string;
-  organisation: string;
-}
-
 // Placeholders — replace with the real team.
 export const team: Member[] = [
   {
@@ -33,10 +27,4 @@ export const team: Member[] = [
     topics: ['dev'],
     responsibilities: ['Responsibility', 'Responsibility'],
   },
-];
-
-// Client, coaches and experts you meet with.
-export const contacts: Contact[] = [
-  { name: 'Contact name', role: 'Client contact', organisation: 'Client' },
-  { name: 'Contact name', role: 'Coach / supervisor', organisation: 'Howest' },
 ];

@@ -20,7 +20,7 @@ Process blog for my team's bachelor thesis (DEVINE, Howest), built with [Astro](
 | Blog posts                   | `src/content/blog/*.md`                |
 | Time tracking (hours/day)    | `src/data/timelog.ts`                  |
 | Planning phases & tasks      | `src/data/planning.ts`                 |
-| Team roles & contacts        | `src/data/team.ts`                     |
+| Team roles                   | `src/data/team.ts`                     |
 | About page / AI policy       | `src/pages/about.astro`                |
 | Colours & typography         | `src/styles/global.css`                |
 
