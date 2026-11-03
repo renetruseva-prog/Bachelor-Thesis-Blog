@@ -26,7 +26,7 @@ Process blog for my team's bachelor thesis (DEVINE, Howest), built with [Astro](
 
 ## Writing a post
 
-**Easiest:** run `npm run dev`, open [localhost:4321/new](http://localhost:4321/new) (or click **+ New post** in the
+**Easiest:** run `npm run dev`, open [localhost:4321/Bachelor-Thesis-Blog/new](http://localhost:4321/Bachelor-Thesis-Blog/new) (or click **+ New post** in the
 menu), fill in the form and save. It writes a Markdown file to `src/content/blog/` that you can edit afterwards.
 Add images with **+ Add images**, by dragging them onto the content box or by pasting a screenshot — they are
 saved to `src/content/blog/images/` and inserted at the cursor. The form only exists in dev mode — it is not part of the published site.
@@ -56,8 +56,13 @@ shared as *Anyone with the link can view*, otherwise visitors see a Figma login 
 
 ## Deploying
 
-Any static host works (Netlify, Vercel, Cloudflare Pages, GitHub Pages). Set `site` in `astro.config.mjs`
-to the final URL; for GitHub Pages under a repo path also set `base`.
+The site is published to GitHub Pages at **https://renetruseva-prog.github.io/Bachelor-Thesis-Blog/**.
+Every push to `main` builds and deploys it via `.github/workflows/deploy.yml` (progress: the repo's **Actions** tab).
+
+One-time setup: in the repo go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
+
+Because of the `base` path in `astro.config.mjs`, the dev server runs at `localhost:4321/Bachelor-Thesis-Blog/`
+(the post form at `/Bachelor-Thesis-Blog/new`). Always build links with the `url()` helper from `src/utils.ts`.
 
 > Note: Astro is pinned to 7.3.8 because newer versions require Node ≥ 22.23. After upgrading Node you can
 > run `npm install astro@latest`.
