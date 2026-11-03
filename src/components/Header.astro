@@ -9,6 +9,8 @@ const links = [
   { href: '/time', label: 'Time' },
   { href: '/team', label: 'Team' },
   { href: '/about', label: 'About' },
+  // The post form only exists while running `npm run dev`.
+  ...(import.meta.env.DEV ? [{ href: '/new', label: '+ New post' }] : []),
 ];
 
 const current = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
