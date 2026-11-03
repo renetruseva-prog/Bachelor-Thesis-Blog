@@ -1,7 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { TOPIC_KEYS } from './consts';
+import { MEMBER_KEYS, TOPIC_KEYS } from './consts';
 
 const blog = defineCollection({
   // Files starting with an underscore (like _template.md) are ignored.
@@ -13,6 +13,8 @@ const blog = defineCollection({
     updatedDate: z.coerce.date().optional(),
     // One or more topics from src/consts.ts — this drives the filters.
     topics: z.array(z.enum(TOPIC_KEYS)).min(1),
+    // Who wrote the post — one or more keys from TEAM in src/consts.ts.
+    authors: z.array(z.enum(MEMBER_KEYS)).default([]),
     // Free tags for finer filtering (e.g. "interview", "figma", "three.js").
     tags: z.array(z.string()).default([]),
     // Marks a post as a placeholder so it is visually flagged.

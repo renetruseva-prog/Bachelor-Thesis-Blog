@@ -8,6 +8,16 @@ export const SITE = {
   school: 'Howest — DEVINE',
 };
 
+// Team members. The key is what you write in a post's `authors` frontmatter and in a timelog entry's `member`.
+export const TEAM = {
+  renet: { name: 'Renet Ruseva' },
+  member2: { name: 'Ulrika Garisone' },
+  member3: { name: 'Liviu Balan' },
+} as const;
+
+export type MemberKey = keyof typeof TEAM;
+export const MEMBER_KEYS = Object.keys(TEAM) as [MemberKey, ...MemberKey[]];
+
 // Topics used to filter posts. The key is what you write in a post's `topics` frontmatter.
 // `color` is the accent, `tint` the soft background. Add or rename topics here.
 export const TOPICS = {
