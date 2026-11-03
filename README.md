@@ -28,7 +28,8 @@ Process blog for my bachelor thesis (DEVINE, Howest), built with [Astro](https:/
 
 **Easiest:** run `npm run dev`, open [localhost:4321/new](http://localhost:4321/new) (or click **+ New post** in the
 menu), fill in the form and save. It writes a Markdown file to `src/content/blog/` that you can edit afterwards.
-The form only exists in dev mode — it is not part of the published site.
+Add images with **+ Add images**, by dragging them onto the content box or by pasting a screenshot — they are
+saved to `src/content/blog/images/` and inserted at the cursor. The form only exists in dev mode — it is not part of the published site.
 
 **By hand:**
 

@@ -1,11 +1,22 @@
 // Dev-only "New post" form.
-// While `npm run dev` runs, it adds the page /new and an endpoint that saves the post
-// as a Markdown file in src/content/blog/. None of this is part of the built site.
+// While `npm run dev` runs, it adds the page /new plus two endpoints: one that saves the post
+// as a Markdown file in src/content/blog/, and one that saves uploaded images in
+// src/content/blog/images/. None of this is part of the built site.
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ENDPOINT = '/__new-post';
+const IMAGE_ENDPOINT = '/__upload-image';
+const IMAGE_TYPES = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'image/avif': 'avif',
+  'image/svg+xml': 'svg',
+};
+const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
 /** Quote a value for YAML frontmatter. */
 const q = (value) => JSON.stringify(String(value));
@@ -73,6 +84,42 @@ export default function newPost() {
               {
                 name: 'new-post-endpoint',
                 configureServer(server) {
+                  // Body: the raw image bytes. Header X-Filename: the original file name.
+                  server.middlewares.use(IMAGE_ENDPOINT, async (req, res) => {
+                    const send = (status, data) => {
+                      res.statusCode = status;
+                      res.setHeader('Content-Type', 'application/json');
+                      res.end(JSON.stringify(data));
+                    };
+                    if (req.method !== 'POST') return send(405, { errors: ['Use POST.'] });
+
+                    const ext = IMAGE_TYPES[req.headers['content-type']];
+                    if (!ext) return send(415, { errors: ['Only JPG, PNG, WebP, GIF, AVIF or SVG images are allowed.'] });
+
+                    try {
+                      const chunks = [];
+                      let size = 0;
+                      for await (const chunk of req) {
+                        size += chunk.length;
+                        if (size > MAX_IMAGE_BYTES) return send(413, { errors: ['Image is larger than 20 MB.'] });
+                        chunks.push(chunk);
+                      }
+
+                      const original = decodeURIComponent(String(req.headers['x-filename'] ?? 'image'));
+                      const base = slugify(original.replace(/\.[^.]+$/, '')) || 'image';
+                      const dir = path.join(blogDir, 'images');
+                      await fs.mkdir(dir, { recursive: true });
+
+                      let name = `${base}.${ext}`;
+                      for (let i = 2; await exists(path.join(dir, name)); i++) name = `${base}-${i}.${ext}`;
+
+                      await fs.writeFile(path.join(dir, name), Buffer.concat(chunks));
+                      send(201, { path: `./images/${name}`, file: path.relative(process.cwd(), path.join(dir, name)) });
+                    } catch (error) {
+                      send(500, { errors: [String(error)] });
+                    }
+                  });
+
                   server.middlewares.use(ENDPOINT, async (req, res) => {
                     const send = (status, data) => {
                       res.statusCode = status;
