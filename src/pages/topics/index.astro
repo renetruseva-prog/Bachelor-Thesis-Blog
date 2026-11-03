@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { TOPICS, TOPIC_KEYS } from '../../consts';
+import { TOPICS, MAIN_TOPIC_KEYS } from '../../consts';
 import { getPosts, slugify, url } from '../../utils';
 
 const posts = await getPosts();
@@ -18,7 +18,7 @@ const tags = [...tagCounts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0
 
   <div class="grid">
     {
-      TOPIC_KEYS.map((key) => {
+      MAIN_TOPIC_KEYS.map((key) => {
         const t = TOPICS[key];
         const count = posts.filter((p) => p.data.topics.includes(key)).length;
         return (
