@@ -11,8 +11,10 @@ interface Props {
 }
 
 const { posts } = Astro.props;
+// Only these topics get a filter button.
+const FILTER_KEYS = TOPIC_KEYS.slice(0, 3);
 const counts = Object.fromEntries(
-  TOPIC_KEYS.map((key) => [key, posts.filter((p) => p.data.topics.includes(key)).length]),
+  FILTER_KEYS.map((key) => [key, posts.filter((p) => p.data.topics.includes(key)).length]),
 );
 ---
 
@@ -22,7 +24,7 @@ const counts = Object.fromEntries(
       All <span class="count">{posts.length}</span>
     </a>
     {
-      TOPIC_KEYS.map((key) => (
+      FILTER_KEYS.map((key) => (
         <a
           class="filter"
           href={url(`/topics/${key}`)}
