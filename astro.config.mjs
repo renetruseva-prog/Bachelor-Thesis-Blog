@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import newPost from './integrations/new-post.mjs';
+import { satteri } from '@astrojs/markdown-satteri';
+import { figmaEmbed } from './integrations/figma-embed.mjs';
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
@@ -10,4 +12,8 @@ export default defineConfig({
   // base: '/blog_bachelorThesis',
   // Adds a "New post" form at /new while running `npm run dev` (not included in the build).
   integrations: [newPost()],
+  markdown: {
+    // A Figma / FigJam link on its own line in a post becomes an embedded board.
+    processor: satteri({ mdastPlugins: [figmaEmbed] }),
+  },
 });

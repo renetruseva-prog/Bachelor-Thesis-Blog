@@ -44,6 +44,10 @@ saved to `src/content/blog/images/` and inserted at the cursor. The form only ex
 
 Images can live next to the post (e.g. `src/content/blog/images/`) and be referenced with a relative path.
 
+**FigJam / Figma embeds:** paste a Figma or FigJam link on its own line (optionally as `[Title](link)`) and it is shown
+as a live, zoomable board. To embed one frame, right-click it in FigJam → *Copy link to selection*. The file must be
+shared as *Anyone with the link can view*, otherwise visitors see a Figma login screen.
+
 ## Filtering
 
 - Home page: filter buttons per topic (instant, and shareable via `?topic=ux`).

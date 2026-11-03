@@ -104,6 +104,21 @@ const { Content } = await render(post);
   .content :global(img) {
     margin: 1rem 0;
   }
+  .content :global(.figma-embed) {
+    margin: 2rem 0;
+  }
+  .content :global(.figma-embed iframe) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  .content :global(.figma-embed figcaption) {
+    margin-top: 0.5rem;
+    text-align: left;
+  }
   /* Images written on consecutive lines (no blank line between them) sit side by side. */
   .content :global(p:has(> img + img)) {
     display: grid;
