@@ -1,6 +1,6 @@
 // Global site settings — edit these first.
 export const SITE = {
-  title: 'Bachelor Thesis Journal',
+  title: 'Bachelor Thesis Blog',
   author: 'Renet Ruseva',
   description:
     'Process blog for my Bachelor thesis at DEVINE: research, design, development, feedback, planning and time tracking.',
