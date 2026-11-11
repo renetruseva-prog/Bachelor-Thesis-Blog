@@ -2,7 +2,7 @@
 title: "Defining our concept (Autumn break; part 1 || 31/10 - 08/11)"
 description: "Read this post to learn more about how we re-worked our first concept."
 pubDate: 2026-11-10
-topics: ["ux"]
+topics: ["ux", "process"]
 authors: ["renet"]
 tags: ["brainstorming", "client meeting", "sketches", "AI guidance"]
 ---
