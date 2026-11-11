@@ -54,7 +54,7 @@ const { Content } = await render(post);
       {
         older ? (
           <a href={url(`/blog/${older.id}`)}>
-            <span>← Older</span>
+            <span>← Previous</span>
             {older.data.title}
           </a>
         ) : (
@@ -64,7 +64,7 @@ const { Content } = await render(post);
       {
         newer && (
           <a class="next" href={url(`/blog/${newer.id}`)}>
-            <span>Newer →</span>
+            <span>Next →</span>
             {newer.data.title}
           </a>
         )
