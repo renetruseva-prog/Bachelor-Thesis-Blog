@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import TopicChip from '../components/TopicChip.astro';
 import MemberStatsTable from '../components/MemberStatsTable.astro';
 import { TEAM, MEMBER_KEYS, TOPICS, TOPIC_KEYS } from '../consts';
-import { timelog, type TimeEntry } from '../data/timelog';
+import { excludedFromAverage, timelog, type TimeEntry } from '../data/timelog';
 import { formatDate, formatHours as fmt, sumHours } from '../utils';
 
 // Group entries per day, newest first
@@ -23,7 +23,10 @@ const maxDay = Math.max(1, ...days.map((d) => d.hours));
 function summarise(entries: TimeEntry[]) {
   const hours = sumHours(entries);
   const dayCount = new Set(entries.map((e) => e.date)).size;
-  return [fmt(hours), dayCount, fmt(dayCount ? hours / dayCount : 0)];
+  // The average leaves out the days listed in `excludedFromAverage`.
+  const counted = entries.filter((e) => !excludedFromAverage.includes(e.date));
+  const countedDays = new Set(counted.map((e) => e.date)).size;
+  return [fmt(hours), dayCount, fmt(countedDays ? sumHours(counted) / countedDays : 0)];
 }
 
 const members = MEMBER_KEYS.map((key) => {
@@ -42,10 +45,20 @@ const members = MEMBER_KEYS.map((key) => {
   <p class="lead">An overview of how much time each of us spends on our bachelor thesis, per day and per topic.</p>
 
   <MemberStatsTable
-    columns={['Total hours', 'Days worked', 'Average per day']}
+    columns={['Total hours', 'Days worked', 'Average per day*']}
     rows={members}
     total={summarise(timelog)}
   />
+  {
+    excludedFromAverage.length > 0 && (
+      <p class="footnote">
+        * The average per day leaves out {excludedFromAverage.length} shorter days during the autumn break - (
+        {formatDate(new Date(excludedFromAverage[0]), { year: undefined })} –{' '}
+        {formatDate(new Date(excludedFromAverage[excludedFromAverage.length - 1]), { year: undefined })}). Their hours
+        and days still count in the other columns.
+      </p>
+    )
+  }
 
   {
     members.some((m) => m.topics.length > 0) && (
@@ -131,6 +144,11 @@ const members = MEMBER_KEYS.map((key) => {
 </Base>
 
 <style>
+  .footnote {
+    margin: 0.75rem 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
   .members {
     display: grid;
     gap: 1.75rem;
